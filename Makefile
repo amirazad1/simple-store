@@ -8,10 +8,10 @@ dropdb:
     docker exec -it mysql-server mysql -u root -e "drop database store;"
 
 migrateup:
-    migrate -path db/migration -database "mysql://root:@tcp(localhost:3306)/store" -verbose up
+    migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose up
 
 migratedown:
-    migrate -path db/migration -database "mysql://root:@tcp(localhost:3306)/store" -verbose down
+    migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose down
 
 sqlc:
     sqlc generate
