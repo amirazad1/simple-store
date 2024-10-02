@@ -19,4 +19,7 @@ sqlc:
 test:
     go test -v -cover ./...
 
+getall:
+    go get -u -v -f all
+
 .PHONY:mysql createdb dropdb migrateup migratedown sqlc test
