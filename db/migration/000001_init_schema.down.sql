@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS `factor_details`;
+DROP TABLE IF EXISTS `factors`;
+DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `users`;
