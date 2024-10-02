@@ -11,7 +11,7 @@ import (
 
 const (
 	dbDriver = "mysql"
-	dbSource = "root:@tcp(localhost:3306)/store?charset=utf8&parseTime=True&loc=Local"
+	dbSource = "root:secret@tcp(localhost:3306)/store?charset=utf8&parseTime=True&loc=Local"
 )
 
 var testQueries *db.Queries
