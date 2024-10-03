@@ -4,25 +4,24 @@ import (
 	"database/sql"
 	"github.com/amirazad1/simple-store/api"
 	"github.com/amirazad1/simple-store/service"
+	"github.com/amirazad1/simple-store/util"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 )
 
-const (
-	dbDriver = "mysql"
-	dbSource = "root:secret@tcp(localhost:3306)/store?charset=utf8&parseTime=True&loc=Local"
-	address  = "0.0.0.0:8080"
-)
-
 func main() {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("can not load config file", err)
+	}
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("can not connect to db: ", err)
 	}
 
 	store := service.NewStore(conn)
 	server := api.NewServer(store)
-	err = server.Start(address)
+	err = server.Start(config.ServerAddress)
 	if err != nil {
 		log.Fatal("can not start server:", err)
 	}
