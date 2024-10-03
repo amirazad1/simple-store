@@ -2,35 +2,22 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	dbc "github.com/amirazad1/simple-store/db/sqlc"
 )
-
-type Sale struct {
-	db *sql.DB
-	*dbc.Queries
-}
-
-func NewSale(dbs *sql.DB) *Sale {
-	return &Sale{
-		db:      dbs,
-		Queries: dbc.New(dbs),
-	}
-}
 
 type SaleTxParams struct {
 	FactorParam dbc.CreateFactorParams
 	DetailParam dbc.CreateFactorDetailParams
 }
 
-func (sale *Sale) SaleTx(ctx context.Context, arg SaleTxParams) (int64, error) {
-	tx, err := sale.db.BeginTx(ctx, nil)
+func (store *Store) SaleTx(ctx context.Context, arg SaleTxParams) (int64, error) {
+	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return -1, err
 	}
 	defer tx.Rollback()
-	qtx := sale.Queries.WithTx(tx)
+	qtx := store.Queries.WithTx(tx)
 
 	product, err := qtx.GetProduct(ctx, arg.DetailParam.ProductID)
 	if err != nil {
@@ -38,12 +25,12 @@ func (sale *Sale) SaleTx(ctx context.Context, arg SaleTxParams) (int64, error) {
 	}
 
 	if product.PresentNumber < arg.DetailParam.SaleCount {
-		return -1, errors.New("not enough product for sale")
+		return -1, errors.New("not enough product for store")
 	}
 
 	//create factor if id is zero
 	if arg.DetailParam.FactorID == 0 {
-		result, err := sale.Queries.CreateFactor(ctx, arg.FactorParam)
+		result, err := store.Queries.CreateFactor(ctx, arg.FactorParam)
 		if err != nil {
 			return -1, err
 		}

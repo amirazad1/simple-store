@@ -82,7 +82,7 @@ func (q *Queries) ListFactorDetails(ctx context.Context, arg ListFactorDetailsPa
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FactorDetail
+	items := []FactorDetail{}
 	for rows.Next() {
 		var i FactorDetail
 		if err := rows.Scan(

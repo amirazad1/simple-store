@@ -74,7 +74,7 @@ func (q *Queries) ListFactors(ctx context.Context, arg ListFactorsParams) ([]Fac
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Factor
+	items := []Factor{}
 	for rows.Next() {
 		var i Factor
 		if err := rows.Scan(

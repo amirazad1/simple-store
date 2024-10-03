@@ -80,7 +80,7 @@ func createRandomUser(t *testing.T) db.User {
 }
 
 func TestSaleTx(t *testing.T) {
-	sale := NewSale(testDB)
+	sale := NewStore(testDB)
 
 	n := 5
 	product := createRandomProductWitNum(t, int32(n))

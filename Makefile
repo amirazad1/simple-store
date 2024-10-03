@@ -22,4 +22,7 @@ test:
 getall:
 	go get -u -v -f all
 
+server:
+	go run main.go
+
 .PHONY:mysql createdb dropdb migrateup migratedown sqlc test
