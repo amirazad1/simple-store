@@ -11,7 +11,7 @@ type SaleTxParams struct {
 	DetailParam dbc.CreateFactorDetailParams
 }
 
-func (store *Store) SaleTx(ctx context.Context, arg SaleTxParams) (int64, error) {
+func (store *SQLStore) SaleTx(ctx context.Context, arg SaleTxParams) (int64, error) {
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return -1, err

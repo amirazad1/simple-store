@@ -25,4 +25,7 @@ getall:
 server:
 	go run main.go
 
-.PHONY:mysql createdb dropdb migrateup migratedown sqlc test
+mock:
+	mockgen -package mockdb -destination db/mock/store.go  github.com/amirazad1/simple-store/service Store
+
+.PHONY:mysql createdb dropdb migrateup migratedown sqlc test server mock

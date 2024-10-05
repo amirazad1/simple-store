@@ -37,7 +37,7 @@ func (server *Server) createProduct(ctx *gin.Context) {
 		SalePrice:     req.SalePrice,
 	}
 
-	result, err := server.store.Queries.CreateProduct(ctx, arg)
+	result, err := server.store.CreateProduct(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -63,7 +63,7 @@ func (server *Server) getProduct(ctx *gin.Context) {
 		return
 	}
 
-	product, err := server.store.Queries.GetProduct(ctx, req.ID)
+	product, err := server.store.GetProduct(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -94,7 +94,7 @@ func (server *Server) listProduct(ctx *gin.Context) {
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	products, err := server.store.Queries.ListProducts(ctx, arg)
+	products, err := server.store.ListProducts(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
