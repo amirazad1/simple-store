@@ -34,4 +34,4 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go  github.com/amirazad1/simple-store/service Store
 
-.PHONY:mysql createdb dropdb migrateup migratedown sqlc test server mock
+.PHONY:mysql createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc test server mock

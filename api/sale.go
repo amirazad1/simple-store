@@ -58,7 +58,8 @@ func (server *Server) createSale(ctx *gin.Context) {
 			}
 		}
 
-		if err.Error() == e.PRODUCT_NOT_EXISTS {
+		switch err.Error() {
+		case e.PRODUCT_NOT_EXISTS, e.PRODUCT_NOT_ENOUGH:
 			ctx.JSON(http.StatusForbidden, errorResponse(err))
 			return
 		}

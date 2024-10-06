@@ -26,7 +26,7 @@ func (store *SQLStore) SaleTx(ctx context.Context, arg SaleTxParams) (int64, err
 	}
 
 	if product.PresentNumber < arg.DetailParam.SaleCount {
-		return -1, errors.New("not enough product for sale")
+		return -1, errors.New(e.PRODUCT_NOT_ENOUGH)
 	}
 
 	//create factor if id is zero
