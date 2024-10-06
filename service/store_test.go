@@ -58,7 +58,7 @@ func createRandomUser(t *testing.T) db.User {
 		Username: faker.Name(),
 		Password: faker.Password(),
 		FullName: faker.Name(),
-		Mobile:   faker.Phonenumber()[0:10],
+		Mobile:   faker.E164PhoneNumber(),
 		PasswordChangedAt: sql.NullTime{
 			Time:  time.Now(),
 			Valid: true,
@@ -100,7 +100,7 @@ func TestSaleTx(t *testing.T) {
 						Valid:  true,
 					},
 					CustomerMobile: sql.NullString{
-						String: faker.Phonenumber()[0:10],
+						String: faker.E164PhoneNumber(),
 						Valid:  true,
 					},
 					Seller: user.Username,

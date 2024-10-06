@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+type Category struct {
+	Name      string    `json:"name"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"created_at"`
+	ID        int32     `json:"id"`
+}
+
 type Factor struct {
 	CustomerName   sql.NullString `json:"customer_name"`
 	CustomerMobile sql.NullString `json:"customer_mobile"`
@@ -36,6 +43,13 @@ type Product struct {
 	SalePrice     sql.NullInt64  `json:"sale_price"`
 	CreatedAt     time.Time      `json:"created_at"`
 	ID            int64          `json:"id"`
+}
+
+type ProductCategory struct {
+	ProductID  int64     `json:"product_id"`
+	CategoryID int32     `json:"category_id"`
+	CreatedAt  time.Time `json:"created_at"`
+	ID         int64     `json:"id"`
 }
 
 type User struct {

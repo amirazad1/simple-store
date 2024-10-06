@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/amirazad1/simple-store/util"
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -10,18 +11,20 @@ import (
 )
 
 func createRandomUser(t *testing.T) User {
+	password, err := util.HashPassword(faker.Password())
+	require.NoError(t, err)
 	arg := CreateUserParams{
 		Username: faker.Name(),
-		Password: faker.Password(),
+		Password: password,
 		FullName: faker.Name(),
-		Mobile:   faker.Phonenumber()[0:10],
+		Mobile:   faker.E164PhoneNumber(),
 		PasswordChangedAt: sql.NullTime{
 			Time:  time.Now(),
 			Valid: true,
 		},
 	}
 
-	_, err := testQueries.CreateUser(context.Background(), arg)
+	_, err = testQueries.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
 
 	user, err := testQueries.GetUser(context.Background(), arg.Username)
@@ -57,7 +60,7 @@ func TestQueries_UpdateUser(t *testing.T) {
 	arg := UpdateUserParams{
 		Username: user1.Username,
 		FullName: faker.Name(),
-		Mobile:   faker.Phonenumber()[0:10],
+		Mobile:   faker.E164PhoneNumber(),
 	}
 
 	result, err := testQueries.UpdateUser(context.Background(), arg)
@@ -76,9 +79,10 @@ func TestQueries_UpdateUser(t *testing.T) {
 func TestQueries_UpdateUserPassword(t *testing.T) {
 	user1 := createRandomUser(t)
 
+	password, err := util.HashPassword(faker.Password())
 	arg := UpdateUserPasswordParams{
 		Username: user1.Username,
-		Password: faker.Password(),
+		Password: password,
 		PasswordChangedAt: sql.NullTime{
 			Time:  time.Now(),
 			Valid: true,

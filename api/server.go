@@ -20,6 +20,9 @@ func NewServer(store service.Store) *Server {
 
 	router.POST("/sales", server.createSale)
 
+	router.POST("/users", server.createUser)
+	router.GET("/users/:name", server.getUser)
+
 	server.router = router
 	return server
 }
