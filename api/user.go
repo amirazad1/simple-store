@@ -6,7 +6,6 @@ import (
 	"github.com/amirazad1/simple-store/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
-	"log"
 	"net/http"
 )
 
@@ -66,14 +65,11 @@ type userResponse struct {
 }
 
 func (server *Server) getUser(ctx *gin.Context) {
-	log.Println(ctx.Request)
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	log.Println(req)
 
 	user, err := server.store.GetUser(ctx, req.Username)
 	if err != nil {
