@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	dbc "github.com/amirazad1/simple-store/db/sqlc"
+	"github.com/amirazad1/simple-store/util/e"
 )
 
 type SaleTxParams struct {
@@ -21,11 +22,11 @@ func (store *SQLStore) SaleTx(ctx context.Context, arg SaleTxParams) (int64, err
 
 	product, err := qtx.GetProduct(ctx, arg.DetailParam.ProductID)
 	if err != nil {
-		return -1, err
+		return -1, errors.New(e.PRODUCT_NOT_EXISTS)
 	}
 
 	if product.PresentNumber < arg.DetailParam.SaleCount {
-		return -1, errors.New("not enough product for store")
+		return -1, errors.New("not enough product for sale")
 	}
 
 	//create factor if id is zero

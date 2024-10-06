@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	db "github.com/amirazad1/simple-store/db/sqlc"
 	"github.com/amirazad1/simple-store/service"
+	"github.com/amirazad1/simple-store/util/e"
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 	"net/http"
 )
 
@@ -48,6 +50,19 @@ func (server *Server) createSale(ctx *gin.Context) {
 
 	result, err := server.store.SaleTx(ctx, arg)
 	if err != nil {
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			switch mysqlErr.Number {
+			case 1452:
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
+
+		if err.Error() == e.PRODUCT_NOT_EXISTS {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
+		}
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
