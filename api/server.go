@@ -18,6 +18,8 @@ func NewServer(store service.Store) *Server {
 	router.GET("/products/:id", server.getProduct)
 	router.GET("/products", server.listProduct)
 
+	router.POST("/sales", server.createSale)
+
 	server.router = router
 	return server
 }

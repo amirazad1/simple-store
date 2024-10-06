@@ -10,8 +10,14 @@ dropdb:
 migrateup:
 	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose up
 
+migrateup1:
+	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose up 1
+
 migratedown:
 	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose down
+
+migratedown1:
+	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/store" -verbose down 1
 
 sqlc:
 	sqlc generate
