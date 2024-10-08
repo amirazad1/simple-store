@@ -1,17 +1,36 @@
 package api
 
 import (
+	"fmt"
 	"github.com/amirazad1/simple-store/service"
+	"github.com/amirazad1/simple-store/token"
+	"github.com/amirazad1/simple-store/util"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	store  service.Store
-	router *gin.Engine
+	config     util.Config
+	store      service.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
 }
 
-func NewServer(store service.Store) *Server {
-	server := &Server{store: store}
+func NewServer(config util.Config, store service.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err)
+	}
+
+	server := &Server{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
+	server.setupRouter()
+	return server, nil
+}
+
+func (server *Server) setupRouter() {
 	router := gin.Default()
 
 	router.POST("/products", server.createProduct)
@@ -24,7 +43,6 @@ func NewServer(store service.Store) *Server {
 	router.GET("/users/:name", server.getUser)
 
 	server.router = router
-	return server
 }
 
 func (server *Server) Start(address string) error {
