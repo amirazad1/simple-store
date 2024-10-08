@@ -16,7 +16,7 @@ type Server struct {
 }
 
 func NewServer(config util.Config, store service.Store) (*Server, error) {
-	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
 	}
@@ -40,6 +40,7 @@ func (server *Server) setupRouter() {
 	router.POST("/sales", server.createSale)
 
 	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
 	router.GET("/users/:name", server.getUser)
 
 	server.router = router
