@@ -7,6 +7,7 @@ import (
 	"fmt"
 	mockdb "github.com/amirazad1/simple-store/db/mock"
 	db "github.com/amirazad1/simple-store/db/sqlc"
+	"github.com/amirazad1/simple-store/token"
 	"github.com/go-faker/faker/v4"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -18,17 +19,22 @@ import (
 )
 
 func TestGetProductAPI(t *testing.T) {
+	user, _ := randomUser(t)
 	product := randomProduct()
 
 	testCases := []struct {
 		name          string
 		productId     int64
+		setupAuth     func(t *testing.T, request *http.Request, tokenMaker token.Maker)
 		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
 			name:      "OK",
 			productId: product.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetProduct(gomock.Any(), gomock.Eq(product.ID)).
@@ -40,9 +46,42 @@ func TestGetProductAPI(t *testing.T) {
 				//requireBodyMatchProduct(t, recorder.Body, product)
 			},
 		},
+		//{
+		//	name:      "UnauthorizedUser",
+		//	productId: product.ID,
+		//	setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+		//		addAuthorization(t, request, tokenMaker, authorizationTypeBearer, "unauthorized_user", time.Minute)
+		//	},
+		//	buildStubs: func(store *mockdb.MockStore) {
+		//		store.EXPECT().
+		//			GetProduct(gomock.Any(), gomock.Eq(product.ID)).
+		//			Times(1).
+		//			Return(product, nil)
+		//	},
+		//	checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		//		require.Equal(t, http.StatusUnauthorized, recorder.Code)
+		//	},
+		//},
+		{
+			name:      "NoAuthorization",
+			productId: product.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					GetProduct(gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
 		{
 			name:      "NotFound",
 			productId: product.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetProduct(gomock.Any(), gomock.Eq(product.ID)).
@@ -56,6 +95,9 @@ func TestGetProductAPI(t *testing.T) {
 		{
 			name:      "InternalError",
 			productId: product.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetProduct(gomock.Any(), gomock.Eq(product.ID)).
@@ -69,6 +111,9 @@ func TestGetProductAPI(t *testing.T) {
 		{
 			name:      "InvalidID",
 			productId: 0,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetProduct(gomock.Any(), gomock.Any()).
@@ -97,6 +142,7 @@ func TestGetProductAPI(t *testing.T) {
 			request, err := http.NewRequest("GET", url, nil)
 			require.NoError(t, err)
 
+			tc.setupAuth(t, request, server.tokenMaker)
 			server.router.ServeHTTP(recorder, request)
 			tc.checkResponse(t, recorder)
 		})

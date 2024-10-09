@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	db "github.com/amirazad1/simple-store/db/sqlc"
 	"github.com/amirazad1/simple-store/service"
+	"github.com/amirazad1/simple-store/token"
 	"github.com/amirazad1/simple-store/util/e"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
@@ -13,7 +14,6 @@ import (
 type CreateSaleRequest struct {
 	CustomerName   string `json:"customer_name" `
 	CustomerMobile string `json:"customer_mobile"`
-	Seller         string `json:"seller" binding:"required"`
 	FactorID       int64  `json:"factor_id" binding:"min=0"`
 	ProductID      int64  `json:"product_id" binding:"required,min=1"`
 	SaleCount      int32  `json:"sale_count" binding:"required,min=1"`
@@ -28,6 +28,7 @@ func (server *Server) createSale(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := service.SaleTxParams{
 		FactorParam: db.CreateFactorParams{
 			CustomerName: sql.NullString{
@@ -38,7 +39,7 @@ func (server *Server) createSale(ctx *gin.Context) {
 				String: req.CustomerMobile,
 				Valid:  true,
 			},
-			Seller: req.Seller,
+			Seller: authPayload.Username,
 		},
 		DetailParam: db.CreateFactorDetailParams{
 			FactorID:  req.FactorID,
