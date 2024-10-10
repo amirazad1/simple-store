@@ -1,5 +1,7 @@
+createnetwork:
+	docker network create store-network
 mysql:
-	docker run --name mysql-server -p 3306:3306 -e MY_SQL_ROOT_PASSWORD=secret -d mysql
+	docker run --name mysql-server --network store-network -p 3306:3306 -e MY_SQL_ROOT_PASSWORD=secret -d mysql
 
 createdb:
 	docker exec -it mysql-server mysql -u root -e "create database store;"
@@ -34,4 +36,10 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go  github.com/amirazad1/simple-store/service Store
 
-.PHONY:mysql createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc test server mock
+app_image:
+	docker build -t simplestore:latest .
+
+app:
+	docker run --name:simple-store --network store-network -p 8080:8080 -e GIN_MODE=release DB_SOURCE = "root:secret@tcp(mysql-server:3306)/store?charset=utf8&parseTime=True&loc=Local" simplestore:latest
+
+.PHONY:createnetwork mysql createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc test server mock app_image app
