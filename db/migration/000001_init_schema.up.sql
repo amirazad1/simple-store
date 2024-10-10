@@ -5,7 +5,7 @@
 CREATE TABLE `factors` (
                            `id` bigint(20) NOT NULL,
                            `customer_name` varchar(50) COLLATE utf8_persian_ci DEFAULT NULL,
-                           `customer_mobile` char(11) COLLATE utf8_persian_ci DEFAULT NULL,
+                           `customer_mobile` char(15) COLLATE utf8_persian_ci DEFAULT NULL,
                            `seller` varchar(50) COLLATE utf8_persian_ci NOT NULL,
                            `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci;
@@ -53,7 +53,7 @@ CREATE TABLE `users` (
                          `username` varchar(50) COLLATE utf8_persian_ci NOT NULL,
                          `password` varchar(255) COLLATE utf8_persian_ci NOT NULL,
                          `full_name` varchar(50) COLLATE utf8_persian_ci NOT NULL,
-                         `mobile` char(11) COLLATE utf8_persian_ci NOT NULL,
+                         `mobile` char(15) COLLATE utf8_persian_ci NOT NULL,
                          `password_changed_at` timestamp NULL DEFAULT NULL,
                          `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci;
