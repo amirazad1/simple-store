@@ -1,2 +1,3 @@
 This repository is a simple traditional store not an online store with golang and sqlc with test and mocking db
 hamid note. new note!!!!!!!!!!!!!!!!!!!!!!!
+new note 3
